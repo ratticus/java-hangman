@@ -1,0 +1,10 @@
+{
+    "phil": {
+        "category": "names",
+        "difficulty": "easy"
+    },
+    "basketball": {
+        "category": "sports",
+        "difficulty": "normal"
+    }
+}
