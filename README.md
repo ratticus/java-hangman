@@ -2,9 +2,14 @@
 
 A simple hangman game built in java.
 
-## Running the App
-1. Compile program 
+### Prerequisites
+1. Need to have Java installed. https://java.com/en/download/
+
+### Running the App
+1. Go to src/ in your terminal or command prompt.
+
+2. Compile program 
 ``javac Hangman.java``
 
-2. Run program
+3. Run program 
 ``java Hangman``
