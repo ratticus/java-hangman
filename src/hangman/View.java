@@ -26,10 +26,18 @@ public class View {
         System.out.println("Hits: " + hits);
         System.out.println("Misses: " + misses);
         System.out.println("Guesses: " + guesses);
-        System.out.println("Gusses Left: " + guessesLeft);
+        System.out.println("Gusses Left: " + guessesLeft + "\n");
     }
     
     public void userLost() {
         System.out.println("Sorry you lost. Try better next time!");
+    }
+    
+    public void userWon() {
+        System.out.println("Congratulations! You gussed correctly!");
+    }
+    
+    public void guessedAlready(char guess) {
+        System.out.println("You've guessed " + guess + " already. Please select another letter.");
     }
 }

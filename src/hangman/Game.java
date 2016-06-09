@@ -62,16 +62,41 @@ public class Game {
         // try to guess
         char guess = view.promptForGuess();
         
+        if (guessedAlready(guess)) {
+            view.guessedAlready(guess);
+            gameCycle();
+        }
         // return the result of the guess
         boolean result = applyGuess(guess);
         
-        // show progress
-        view.displayProgress(formatAnswer("progress", guess), getHits(), getMisses(), getGuesses(), getGuessesLeft());
+        mFormattedAnswer = formatAnswer("progress", guess);
         
-        if (mGuessesLeft > 0 ) {
+        // show progress
+        view.displayProgress(getFormattedAnswer(), getHits(), getMisses(), getGuesses(), getGuessesLeft());
+        
+        if (didWin() == true) {
+            view.userWon();
+        }
+        else if (mGuessesLeft > 0 ) {
             gameCycle();
         } else {
             view.userLost();
+        }
+    }
+    
+    private boolean guessedAlready(char guess) {
+        if (mGuesses.indexOf(guess) > -1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    private boolean didWin() {
+        if (mFormattedAnswer.indexOf('_') == -1) {
+            return true;
+        } else {
+            return false;
         }
     }
        
@@ -84,15 +109,26 @@ public class Game {
                 formattedString += "_ ";
             }
         } else {
-            for (int p = 0; p < answerArray.length; p++) {
-                for (int q = 0; q < hitsArray.length; q++) {
-                    if (hitsArray[q] == answerArray[p]) {
-                        formattedString += hitsArray[q];
+            loopAnswer: 
+                for (int p = 0; p < answerArray.length; p++) {
+                    char correctHit = '\0';
+                    boolean hit = false;
+
+                    loopHitsInAnswer:
+                    for (int q = 0; q < hitsArray.length; q++) {
+                        if (hitsArray[q] == answerArray[p]) {
+                            correctHit = hitsArray[q];
+                            hit = true;
+                            break loopHitsInAnswer;
+                        } 
+                    }
+                    
+                    if (hit == true) {
+                        formattedString += correctHit;
                     } else {
-                        formattedString += "_ ";
+                         formattedString += "_ ";
                     }
                 }
-            }
         }
        
         return formattedString;
@@ -120,13 +156,11 @@ public class Game {
         
         // if there's a match, add it to mHits
         if (success == true) {
-            System.out.println("hit!!! \n");
             mHits += successfulHit;
         } 
         
         // if not, add the guess to misses and minus guesses left
         else {
-            System.out.println("miss!!! \n");
             mMisses += guess;
              // minus guesses
             mGuessesLeft --;
@@ -149,5 +183,9 @@ public class Game {
     
     public int getGuessesLeft() {
         return mGuessesLeft;
+    }
+    
+    public String getFormattedAnswer() {
+        return mFormattedAnswer;
     }
 }
