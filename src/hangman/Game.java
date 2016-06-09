@@ -1,8 +1,5 @@
 package hangman;
 
-
-import org.json.*;
-
 /*
 Copyright (c) Phillip Chan 2016
 
@@ -34,32 +31,120 @@ SOFTWARE.
  */
 
 public class Game {
-    public String answer;
+    private String mAnswer;
     public int guesses;
-    public String category;
-    private String mHits;
-    private String mMisses;
-    private int mGuessesLeft;
+    private char[] answerArray;
+    private String mFormattedAnswer;
+    private String mHits = "";
+    private String mMisses = "";
+    private String mGuesses = "";
+    private int mGuessesLeft = 5;
     
-    /*
-        Our game constructor
-        First it will get the answer to be used for the game
-    */
-    public Game() {
-        getGameAnswer();
+    public Game(String newAnswer) {
+        mAnswer = newAnswer;
+        startGame();
     }
     
-    private void getGameAnswer() {
-        // JSONObject obj = new JSONObject(" ... ");
-        // have to finish this
+    private void startGame() {
+        // turn answer to array
+        answerArray = mAnswer.toCharArray();
+        
+        // format answer for the board
+        mFormattedAnswer = formatAnswer("init", 'z');
+        System.out.println(mFormattedAnswer);
+        
+        gameCycle();
     }
     
+    private void gameCycle() {
+        View view = new View();
+        
+        // try to guess
+        char guess = view.promptForGuess();
+        
+        // return the result of the guess
+        boolean result = applyGuess(guess);
+        
+        // show progress
+        view.displayProgress(formatAnswer("progress", guess), getHits(), getMisses(), getGuesses(), getGuessesLeft());
+        
+        if (mGuessesLeft > 0 ) {
+            gameCycle();
+        } else {
+            view.userLost();
+        }
+    }
+       
+    private String formatAnswer(String mode, char Guess) {
+        String formattedString = "";
+        char hitsArray[] = mHits.toCharArray();
+        
+        if (mode == "init") {
+            for (int p = 0; p < answerArray.length; p++) {
+                formattedString += "_ ";
+            }
+        } else {
+            for (int p = 0; p < answerArray.length; p++) {
+                for (int q = 0; q < hitsArray.length; q++) {
+                    if (hitsArray[q] == answerArray[p]) {
+                        formattedString += hitsArray[q];
+                    } else {
+                        formattedString += "_ ";
+                    }
+                }
+            }
+        }
+       
+        return formattedString;
+    }
+    
+    private boolean checkIfGuessesBefore(char guess) {
+        return false;
+    }
+    
+    private boolean applyGuess(char guess) {
+        boolean success = false;
+        char successfulHit = '\0';
+        
+        // record guess
+        mGuesses += guess;
+        
+        // loop through answer with guess to see if there's a match
+        for (int x = 0; x < answerArray.length; x++) {
+            if (guess == answerArray[x]) {
+                success = true;
+                successfulHit = answerArray[x];
+                break;
+            }
+        }
+        
+        // if there's a match, add it to mHits
+        if (success == true) {
+            System.out.println("hit!!! \n");
+            mHits += successfulHit;
+        } 
+        
+        // if not, add the guess to misses and minus guesses left
+        else {
+            System.out.println("miss!!! \n");
+            mMisses += guess;
+             // minus guesses
+            mGuessesLeft --;
+        }
+        
+        return success;
+    } 
+        
     public String getHits() {
         return mHits;
     }
     
-    public String getMises() {
+    public String getMisses() {
         return mMisses;
+    }
+    
+    public String getGuesses() {
+        return mGuesses;
     }
     
     public int getGuessesLeft() {
